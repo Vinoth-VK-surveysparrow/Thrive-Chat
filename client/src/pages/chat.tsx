@@ -29,7 +29,7 @@ export default function ChatPage() {
   const generateSessionTitle = (query: string): string => {
     const words = query.trim().split(' ');
     const firstFewWords = words.slice(0, 6).join(' '); // Take first 6 words
-    return firstFewWords.length > 50 ? firstFewWords.substring(0, 50) + '...' : firstFewWords;
+    return firstFewWords.length > 50 ? firstFewWords.substring(0, 47) + '...' : firstFewWords;
   };
 
   const addMessage = (text: string, sender: 'user' | 'bot') => {
@@ -60,6 +60,14 @@ export default function ChatPage() {
       // Generate session title from first message if this is a new session
       const isFirstMessage = !currentSessionId || conversationCount === 0;
       const sessionTitle = isFirstMessage ? generateSessionTitle(text) : undefined;
+      
+      console.log('Session Title Debug:', {
+        isFirstMessage,
+        currentSessionId,
+        conversationCount,
+        text,
+        sessionTitle
+      });
       
       // Get real chatbot response
       const response = await ChatService.askQuestion(text, currentUser.email, currentSessionId, sessionTitle);
@@ -113,6 +121,12 @@ export default function ChatPage() {
       setIsTyping(true);
       const response = await ChatService.getConversationHistory(currentUser.email, sessionId);
       
+      console.log('Loaded conversation history:', {
+        sessionId,
+        sessionTitle: response.session_title,
+        conversationCount: response.conversation_count
+      });
+      
       // Convert conversation history to messages
       const historyMessages: Message[] = [];
       response.conversations.forEach((conv, index) => {
@@ -160,7 +174,7 @@ export default function ChatPage() {
         isCollapsed={!isHistoryVisible}
       />
       <div className="flex-1 flex flex-col">
-        <Header conversationCount={conversationCount} maxConversations={maxConversations} />
+        <Header />
         <ChatArea
           messages={messages}
           isTyping={isTyping}

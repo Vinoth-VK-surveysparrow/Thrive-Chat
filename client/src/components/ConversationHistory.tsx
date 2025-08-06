@@ -132,12 +132,9 @@ export function ConversationHistory({ currentSessionId, onSelectSession, onNewCh
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                       {truncateTitle(session.session_title)}
                     </p>
-                    <div className="flex items-center justify-between mt-1">
+                    <div className="mt-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formatDate(session.last_updated)}
-                      </span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
-                        {session.conversation_count}/15
                       </span>
                     </div>
                   </div>
