@@ -48,7 +48,7 @@ export function FormattedMessage({ text, isUser }: FormattedMessageProps) {
         const [, number, content] = numberedListMatch;
         elements.push(
           <div key={index} className="my-1">
-            <span className="font-semibold text-teal-600 dark:text-teal-400">{number}. </span>
+            <span className="font-semibold text-gray-700 dark:text-gray-300">{number}. </span>
             <span>{formatInlineText(content)}</span>
           </div>
         );
@@ -61,7 +61,7 @@ export function FormattedMessage({ text, isUser }: FormattedMessageProps) {
         const [, content] = bulletMatch;
         elements.push(
           <div key={index} className="my-1 ml-2">
-            <span className="text-teal-600 dark:text-teal-400 mr-2">•</span>
+            <span className="text-gray-600 dark:text-gray-400 mr-2">•</span>
             <span>{formatInlineText(content)}</span>
           </div>
         );

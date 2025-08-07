@@ -21,7 +21,8 @@ export default function ChatPage() {
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
   const [conversationCount, setConversationCount] = useState(0);
   const [maxConversations] = useState(15);
-  const [isHistoryVisible, setIsHistoryVisible] = useState(true);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [historyHoverTimeout, setHistoryHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
@@ -110,9 +111,63 @@ export default function ChatPage() {
     setConversationCount(0);
   };
 
-  const handleToggleHistory = () => {
-    setIsHistoryVisible(!isHistoryVisible);
+  const handleSidebarMouseEnter = () => {
+    if (historyHoverTimeout) {
+      clearTimeout(historyHoverTimeout);
+      setHistoryHoverTimeout(null);
+    }
+    setIsHistoryVisible(true);
   };
+
+  const handleSidebarMouseLeave = (e: React.MouseEvent) => {
+    // Check if mouse is moving towards the history panel
+    const relatedTarget = e.relatedTarget as Element;
+    if (relatedTarget && (
+      relatedTarget.closest('[data-conversation-history]') ||
+      relatedTarget.closest('[data-history-panel]')
+    )) {
+      return; // Don't hide if moving to history panel
+    }
+
+    const timeout = setTimeout(() => {
+      setIsHistoryVisible(false);
+    }, 150); // Reduced from 300ms for better responsiveness
+    setHistoryHoverTimeout(timeout);
+  };
+
+  const handleHistoryBarMouseEnter = () => {
+    if (historyHoverTimeout) {
+      clearTimeout(historyHoverTimeout);
+      setHistoryHoverTimeout(null);
+    }
+  };
+
+  const handleHistoryBarMouseLeave = (e: React.MouseEvent) => {
+    // Don't hide if leaving to interact with a dropdown menu or moving back to sidebar
+    const relatedTarget = e.relatedTarget as Element;
+    if (relatedTarget && (
+      relatedTarget.closest('[data-radix-popper-content-wrapper]') ||
+      relatedTarget.closest('[role="menu"]') ||
+      relatedTarget.closest('[data-conversation-history]') ||
+      relatedTarget.closest('.w-12') // sidebar class
+    )) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setIsHistoryVisible(false);
+    }, 150); // Reduced timeout for better responsiveness
+    setHistoryHoverTimeout(timeout);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (historyHoverTimeout) {
+        clearTimeout(historyHoverTimeout);
+      }
+    };
+  }, [historyHoverTimeout]);
 
   const handleSelectSession = async (sessionId: string) => {
     if (!currentUser?.email) return;
@@ -161,18 +216,41 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-[#1a1a1a]">
+    <div className="flex h-screen bg-gray-50 dark:bg-[#1a1a1a] relative">
       <Sidebar 
         onNewChat={handleNewChat} 
-        onToggleHistory={handleToggleHistory}
+        onSidebarMouseEnter={handleSidebarMouseEnter}
+        onSidebarMouseLeave={handleSidebarMouseLeave}
         isHistoryVisible={isHistoryVisible}
       />
-      <ConversationHistory 
-        currentSessionId={currentSessionId}
-        onSelectSession={handleSelectSession}
-        onNewChat={handleNewChat}
-        isCollapsed={!isHistoryVisible}
-      />
+      
+      {/* Buffer zone for smooth transition */}
+      {isHistoryVisible && (
+        <div 
+          className="absolute left-11 top-0 h-full w-2 z-10"
+          onMouseEnter={handleHistoryBarMouseEnter}
+          onMouseLeave={handleHistoryBarMouseLeave}
+        />
+      )}
+      
+      {/* Overlay History Panel */}
+      <div 
+        data-history-panel
+        onMouseEnter={handleHistoryBarMouseEnter}
+        onMouseLeave={handleHistoryBarMouseLeave}
+        className={`absolute left-12 top-0 h-full z-20 transition-all duration-200 ${
+          isHistoryVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 pointer-events-none'
+        }`}
+        style={{ width: '260px' }}
+      >
+        <ConversationHistory 
+          currentSessionId={currentSessionId}
+          onSelectSession={handleSelectSession}
+          onNewChat={handleNewChat}
+          isVisible={isHistoryVisible}
+        />
+      </div>
+      
       <div className="flex-1 flex flex-col">
         <Header />
         <ChatArea

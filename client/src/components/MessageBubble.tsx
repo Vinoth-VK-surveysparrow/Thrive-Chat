@@ -26,7 +26,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       {/* Avatar */}
       <div className="flex-shrink-0">
         {isUser ? (
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-200 dark:border-teal-400">
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-400">
             <Avatar className="h-10 w-10">
               <AvatarImage 
                 src={currentUser?.photoURL || ''} 

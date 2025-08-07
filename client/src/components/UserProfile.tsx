@@ -33,7 +33,7 @@ export function UserProfile() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-7 w-7 rounded-full p-0">
-          <div className="w-7 h-7 rounded-full overflow-hidden border border-teal-200 dark:border-teal-400">
+          <div className="w-7 h-7 rounded-full overflow-hidden border border-gray-200 dark:border-gray-400">
             <Avatar className="h-7 w-7">
               <AvatarImage 
                 src={currentUser.photoURL || ''} 

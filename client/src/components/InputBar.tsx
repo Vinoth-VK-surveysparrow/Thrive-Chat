@@ -26,7 +26,7 @@ export default function InputBar({ onSendMessage, disabled }: InputBarProps) {
 
   return (
     <div className="px-6 pb-12">
-      <div className="max-w-xl mx-auto mb-8">
+      <div className="max-w-3xl mx-auto mb-8">
         <form onSubmit={handleSubmit} className="relative">
           <input 
             type="text" 
@@ -35,14 +35,14 @@ export default function InputBar({ onSendMessage, disabled }: InputBarProps) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             disabled={disabled}
-            className="w-full bg-white dark:bg-[#262627] border border-gray-200 dark:border-[#3a3a3a] rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+            className="w-full bg-white dark:bg-[#262627] border border-gray-200 dark:border-[#3a3a3a] rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
           />
           <button 
             type="submit"
             disabled={!message.trim() || disabled}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md flex items-center justify-center transition-colors"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-7 h-7 bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md flex items-center justify-center transition-colors"
           >
-            <Send className="text-white" size={12} />
+            <Send className="text-white" size={14} />
           </button>
         </form>
       </div>

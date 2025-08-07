@@ -39,6 +39,7 @@ export class ChatService {
   private static readonly ASK_ENDPOINT = '/ask-question';
   private static readonly GET_SESSIONS_ENDPOINT = '/get-sessions';
   private static readonly GET_CONVERSATION_HISTORY_ENDPOINT = '/get-conversation-history';
+  private static readonly DELETE_SESSION_ENDPOINT = '/delete-session';
 
   // Generate a unique session ID
   static generateSessionId(): string {
@@ -163,6 +164,30 @@ export class ChatService {
     } catch (error) {
       console.error('Error fetching conversation history:', error);
       throw new Error('Failed to fetch conversation history');
+    }
+  }
+
+  static async deleteSession(userEmail: string, sessionId: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.API_BASE_URL}${this.DELETE_SESSION_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_email: userEmail,
+          session_id: sessionId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Success - no need to return data for delete operation
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      throw new Error('Failed to delete session');
     }
   }
 } 
