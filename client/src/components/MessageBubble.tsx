@@ -51,7 +51,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       {/* Message Content */}
       <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
         {!isUser && (
-          <div className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1">NOVA 2.0</div>
+          <div className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1">ThriveChat</div>
         )}
         <div className={`max-w-2xl px-4 py-3 rounded-xl shadow-sm ${
           isUser 

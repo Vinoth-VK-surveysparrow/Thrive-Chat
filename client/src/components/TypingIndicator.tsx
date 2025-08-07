@@ -8,7 +8,7 @@ export default function TypingIndicator() {
 
       {/* Typing Content */}
       <div className="flex flex-col items-start">
-        <div className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1">NOVA 2.0</div>
+        <div className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1">ThriveChat</div>
         <div className="max-w-md px-3 py-2 rounded-xl bg-white dark:bg-[#262627] border border-gray-100 dark:border-[#3a3a3a] mr-16 shadow-sm">
           <div className="typing-dots">
             <span></span>
