@@ -121,11 +121,15 @@ export default function ChatPage() {
 
   const handleSidebarMouseLeave = (e: React.MouseEvent) => {
     // Check if mouse is moving towards the history panel
-    const relatedTarget = e.relatedTarget as Element;
-    if (relatedTarget && (
-      relatedTarget.closest('[data-conversation-history]') ||
-      relatedTarget.closest('[data-history-panel]')
-    )) {
+    const relatedTarget = e.relatedTarget as EventTarget | null;
+    const isElement = (node: any): node is Element => !!node && node.nodeType === 1;
+
+    if (
+      relatedTarget && isElement(relatedTarget) && (
+        relatedTarget.closest?.('[data-conversation-history]') ||
+        relatedTarget.closest?.('[data-history-panel]')
+      )
+    ) {
       return; // Don't hide if moving to history panel
     }
 
@@ -144,13 +148,17 @@ export default function ChatPage() {
 
   const handleHistoryBarMouseLeave = (e: React.MouseEvent) => {
     // Don't hide if leaving to interact with a dropdown menu or moving back to sidebar
-    const relatedTarget = e.relatedTarget as Element;
-    if (relatedTarget && (
-      relatedTarget.closest('[data-radix-popper-content-wrapper]') ||
-      relatedTarget.closest('[role="menu"]') ||
-      relatedTarget.closest('[data-conversation-history]') ||
-      relatedTarget.closest('.w-12') // sidebar class
-    )) {
+    const relatedTarget = e.relatedTarget as EventTarget | null;
+    const isElement = (node: any): node is Element => !!node && node.nodeType === 1;
+
+    if (
+      relatedTarget && isElement(relatedTarget) && (
+        (relatedTarget as Element).closest?.('[data-radix-popper-content-wrapper]') ||
+        (relatedTarget as Element).closest?.('[role="menu"]') ||
+        (relatedTarget as Element).closest?.('[data-conversation-history]') ||
+        (relatedTarget as Element).closest?.('[data-sidebar-root]')
+      )
+    ) {
       return;
     }
 

@@ -3,17 +3,18 @@ import { UserProfile } from "./UserProfile";
 
 interface SidebarProps {
   onNewChat: () => void;
-  onSidebarMouseEnter: () => void;
-  onSidebarMouseLeave: () => void;
+  onSidebarMouseEnter: (e: React.MouseEvent) => void;
+  onSidebarMouseLeave: (e: React.MouseEvent) => void;
   isHistoryVisible: boolean;
 }
 
 export default function Sidebar({ onNewChat, onSidebarMouseEnter, onSidebarMouseLeave, isHistoryVisible }: SidebarProps) {
   return (
-    <div 
-      className="w-12 bg-white dark:bg-[#111111] border-r border-gray-200 dark:border-[#262627] flex flex-col items-center py-2"
-      onMouseEnter={onSidebarMouseEnter}
-      onMouseLeave={onSidebarMouseLeave}
+         <div 
+       className="w-12 bg-white dark:bg-[#111111] border-r border-gray-200 dark:border-[#262627] flex flex-col items-center py-2"
+       data-sidebar-root
+       onMouseEnter={onSidebarMouseEnter}
+       onMouseLeave={onSidebarMouseLeave}
     >
       {/* SurveySparrow Logo */}
       <div className="w-8 h-8 rounded-md bg-teal-500 hover:bg-teal-600 transition-colors relative flex items-center justify-center mb-4">
