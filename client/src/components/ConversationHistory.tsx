@@ -22,9 +22,10 @@ interface ConversationHistoryProps {
   onSelectSession: (sessionId: string) => void;
   onNewChat: () => void;
   isVisible: boolean;
+  onDropdownOpenChange?: (open: boolean) => void;
 }
 
-export function ConversationHistory({ currentSessionId, onSelectSession, onNewChat, isVisible }: ConversationHistoryProps) {
+export function ConversationHistory({ currentSessionId, onSelectSession, onNewChat, isVisible, onDropdownOpenChange }: ConversationHistoryProps) {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
@@ -170,7 +171,7 @@ export function ConversationHistory({ currentSessionId, onSelectSession, onNewCh
                   </button>
                   
                   <div className="absolute top-1 right-1 z-10">
-                    <DropdownMenu>
+                    <DropdownMenu onOpenChange={onDropdownOpenChange}>
                       <DropdownMenuTrigger asChild>
                         <button
                           className="p-1 opacity-0 group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-all"
@@ -178,7 +179,11 @@ export function ConversationHistory({ currentSessionId, onSelectSession, onNewCh
                             e.stopPropagation();
                             e.preventDefault();
                           }}
-                          onMouseDown={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => {
+                            e.stopPropagation();
+                            // Signal interaction so the bar doesn't collapse on edge clicks
+                            onDropdownOpenChange?.(true);
+                          }}
                         >
                           <MoreHorizontal className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                         </button>

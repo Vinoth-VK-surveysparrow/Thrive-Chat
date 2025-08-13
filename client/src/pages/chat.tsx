@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import ChatArea from "@/components/ChatArea";
@@ -23,6 +23,19 @@ export default function ChatPage() {
   const [maxConversations] = useState(15);
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
   const [historyHoverTimeout, setHistoryHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isHistoryDropdownOpen, setIsHistoryDropdownOpen] = useState(false);
+  const [isHistoryInteracting, setIsHistoryInteracting] = useState(false);
+
+  const historyDropdownOpenRef = useRef(isHistoryDropdownOpen);
+  const historyInteractingRef = useRef(isHistoryInteracting);
+
+  useEffect(() => {
+    historyDropdownOpenRef.current = isHistoryDropdownOpen;
+  }, [isHistoryDropdownOpen]);
+  
+  useEffect(() => {
+    historyInteractingRef.current = isHistoryInteracting;
+  }, [isHistoryInteracting]);
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
@@ -112,6 +125,7 @@ export default function ChatPage() {
   };
 
   const handleSidebarMouseEnter = () => {
+    setIsHistoryInteracting(true);
     if (historyHoverTimeout) {
       clearTimeout(historyHoverTimeout);
       setHistoryHoverTimeout(null);
@@ -120,6 +134,8 @@ export default function ChatPage() {
   };
 
   const handleSidebarMouseLeave = (e: React.MouseEvent) => {
+    if (isHistoryDropdownOpen) return; // Keep open while dropdown is active
+
     // Check if mouse is moving towards the history panel
     const relatedTarget = e.relatedTarget as EventTarget | null;
     const isElement = (node: any): node is Element => !!node && node.nodeType === 1;
@@ -133,13 +149,18 @@ export default function ChatPage() {
       return; // Don't hide if moving to history panel
     }
 
+    setIsHistoryInteracting(false);
+
     const timeout = setTimeout(() => {
-      setIsHistoryVisible(false);
-    }, 150); // Reduced from 300ms for better responsiveness
+      if (!historyInteractingRef.current && !historyDropdownOpenRef.current) {
+        setIsHistoryVisible(false);
+      }
+    }, 200);
     setHistoryHoverTimeout(timeout);
   };
 
   const handleHistoryBarMouseEnter = () => {
+    setIsHistoryInteracting(true);
     if (historyHoverTimeout) {
       clearTimeout(historyHoverTimeout);
       setHistoryHoverTimeout(null);
@@ -147,6 +168,8 @@ export default function ChatPage() {
   };
 
   const handleHistoryBarMouseLeave = (e: React.MouseEvent) => {
+    if (isHistoryDropdownOpen) return; // Keep open while dropdown is active
+
     // Don't hide if leaving to interact with a dropdown menu or moving back to sidebar
     const relatedTarget = e.relatedTarget as EventTarget | null;
     const isElement = (node: any): node is Element => !!node && node.nodeType === 1;
@@ -162,10 +185,22 @@ export default function ChatPage() {
       return;
     }
 
+    setIsHistoryInteracting(false);
+
     const timeout = setTimeout(() => {
-      setIsHistoryVisible(false);
-    }, 150); // Reduced timeout for better responsiveness
+      if (!historyInteractingRef.current && !historyDropdownOpenRef.current) {
+        setIsHistoryVisible(false);
+      }
+    }, 180);
     setHistoryHoverTimeout(timeout);
+  };
+
+  const handleMainAreaMouseEnter = () => {
+    // Close history when entering main content if no dropdown is open
+    setIsHistoryInteracting(false);
+    if (!historyDropdownOpenRef.current) {
+      setIsHistoryVisible(false);
+    }
   };
 
   // Cleanup timeout on unmount
@@ -256,10 +291,22 @@ export default function ChatPage() {
           onSelectSession={handleSelectSession}
           onNewChat={handleNewChat}
           isVisible={isHistoryVisible}
+          onDropdownOpenChange={(open) => {
+            setIsHistoryDropdownOpen(open);
+            setIsHistoryInteracting(open);
+            if (open) {
+              // Keep visible while dropdown is open
+              if (historyHoverTimeout) {
+                clearTimeout(historyHoverTimeout);
+                setHistoryHoverTimeout(null);
+              }
+              setIsHistoryVisible(true);
+            }
+          }}
         />
       </div>
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col" onMouseEnter={handleMainAreaMouseEnter}>
         <Header />
         <ChatArea
           messages={messages}
